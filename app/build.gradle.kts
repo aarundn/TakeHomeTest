@@ -2,6 +2,8 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.kotlin.serialization)
+    alias (libs.plugins.ksp)
 }
 
 android {
@@ -56,4 +58,27 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    //ktor
+    implementation(libs.ktor.client.core)
+    implementation(libs.ktor.client.okhttp)
+
+    // Serialization
+    implementation( libs.kotlinx.serialization.json)
+    implementation(libs.ktor.client.content.negotiation)
+    implementation(libs.ktor.serialization.kotlinx.json)
+
+    // hilt
+    implementation(libs.hilt.android)
+    ksp(libs.hilt.compiler)
+
+    //hilts compose
+    implementation(libs.androidx.hilt.navigation.compose)
+    // compose nav host & type safe navigation
+    implementation(libs.androidx.navigation.compose)
+
+    // Coil - asynchronous image loading
+    implementation(libs.coil.compose)
+    // Coil - image Fetcher
+    implementation(libs.coil.network.okhttp)
 }

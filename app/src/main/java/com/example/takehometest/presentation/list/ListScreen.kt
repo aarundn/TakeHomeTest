@@ -3,7 +3,6 @@ package com.example.takehometest.presentation.list
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -20,7 +19,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.takehometest.R
 import com.example.takehometest.presentation.comon.components.LoadingIndicator
-import com.example.takehometest.presentation.list.components.EmptyAndErrorList
+import com.example.takehometest.presentation.list.ListEvent.OnShowToast
+import com.example.takehometest.presentation.list.components.EmptyListScreen
 import com.example.takehometest.presentation.list.components.ListHeader
 import com.example.takehometest.presentation.list.components.ListItems
 import com.example.takehometest.presentation.model.CharacterUi
@@ -39,11 +39,7 @@ fun ListScreen(
             when (state) {
                 is ListUiState.Loading -> LoadingIndicator(modifier = Modifier.fillMaxSize())
 
-
-                is ListUiState.Error -> EmptyAndErrorList(
-                    message = state.message,
-                    modifier = Modifier.fillMaxSize()
-                )
+                is ListUiState.Error -> onAction(OnShowToast(state.message))
 
                 is ListUiState.Success -> {
                     ListContent(
@@ -79,7 +75,7 @@ fun ListContent(
         }.collect { (lastVisibleIndex, totalItems) ->
 
             if (lastVisibleIndex != null && totalItems > 0) {
-                if (lastVisibleIndex >= totalItems - 2) {
+                if (lastVisibleIndex >= totalItems - 1) {
                     onAction(ListEvent.OnLoadMore)
                 }
             }
@@ -94,30 +90,30 @@ fun ListContent(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-
         item { ListHeader() }
+
         when {
 
             characters.isEmpty() -> item {
-                EmptyAndErrorList(
+                EmptyListScreen(
                     message = stringResource(R.string.no_characters_found),
                     modifier = modifier.fillMaxSize()
                 )
             }
 
-            else -> items(characters.size,
+            else -> items(
+                characters.size,
                 key = { index -> characters[index].id }) { index ->
                 val character = characters[index]
                 ListItems(
                     character = character,
-                    onGoToDetails = { id ->
-                        onAction(ListEvent.OnNavigateToDetails(id))
-                    }
+                    onGoToDetails = { id -> onAction(ListEvent.OnNavigateToDetails(id)) }
                 )
             }
         }
         item {
-            if ((state as? ListUiState.Success)?.isLoadingMore == true) {
+            val isLoadingMore = (state as? ListUiState.Success)?.isLoadingMore == true
+            if (isLoadingMore) {
                 CircularProgressIndicator(
                     modifier = Modifier
                         .size(32.dp),

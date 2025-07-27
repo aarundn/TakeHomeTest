@@ -21,14 +21,11 @@ sealed class ListUiState {
 sealed class ListEvent {
     data class OnGetInitialItems(val page: Int) : ListEvent()
     object OnLoadMore : ListEvent()
-    data class OnItemClick(val id: Int) : ListEvent()
     data class OnNavigateToDetails(val itemId: Int) : ListEvent()
-    object OnBackClick : ListEvent()
     data class OnShowToast(val message: String) : ListEvent()
 }
 
 sealed interface ListSideEffect {
     data class ShowToast(val message: String) : ListSideEffect
     data class NavigateToDetails(val itemId: Int) : ListSideEffect
-    object NavigateBack : ListSideEffect
 }

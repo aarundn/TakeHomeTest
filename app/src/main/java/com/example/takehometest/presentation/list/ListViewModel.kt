@@ -3,7 +3,8 @@ package com.example.takehometest.presentation.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.takehometest.domain.usecases.GetCharactersUseCase
-import com.example.takehometest.presentation.list.ListSideEffect.*
+import com.example.takehometest.presentation.list.ListSideEffect.NavigateToDetails
+import com.example.takehometest.presentation.list.ListSideEffect.ShowToast
 import com.example.takehometest.presentation.mapper.toUiModel
 import com.example.takehometest.presentation.model.CharacterUi
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,20 +31,16 @@ class ListViewModel @Inject constructor(
 
     fun onAction(event: ListEvent) {
         when (event) {
-            ListEvent.OnBackClick -> TODO()
             is ListEvent.OnGetInitialItems -> {
                 _state.value = ListUiState.Loading
                 loadItems(event.page)
             }
-
-            is ListEvent.OnItemClick -> TODO()
             is ListEvent.OnNavigateToDetails -> viewModelScope.launch {
-                _sideEffect.emit(
-                    NavigateToDetails(itemId = event.itemId)
-                )
+                _sideEffect.emit(NavigateToDetails(itemId = event.itemId))
             }
-
-            is ListEvent.OnShowToast -> TODO()
+            is ListEvent.OnShowToast -> viewModelScope.launch {
+                _sideEffect.emit(ShowToast(message = event.message))
+            }
             ListEvent.OnLoadMore -> loadMoreItems()
 
         }
@@ -51,11 +48,11 @@ class ListViewModel @Inject constructor(
 
     private fun loadMoreItems() {
         val currentState = _state.value
-        if (
-            currentState is ListUiState.Success &&
-            !currentState.isLoadingMore &&
-            !currentState.reachedEndOfList
-        ) {
+        val canLoadMore = currentState is ListUiState.Success &&
+                !currentState.isLoadingMore &&
+                !currentState.reachedEndOfList
+
+        if (canLoadMore) {
             _state.value = currentState.copy(isLoadingMore = true)
             val nextPage = currentState.currentPage + 1
             loadItems(nextPage, currentState.items)
@@ -69,10 +66,11 @@ class ListViewModel @Inject constructor(
                     _state.value = ListUiState.Error(e.message ?: "Unknown error")
                 }
                 .collect { result ->
+                    val isLastPage = result.totalPages <= page
                     _state.value = ListUiState.Success(
-                        items = previousItems + result.characters.toUiModel() ,
+                        items = previousItems + result.characters.toUiModel(),
                         isLoadingMore = false,
-                        reachedEndOfList = result.totalPages <= page,
+                        reachedEndOfList = isLastPage,
                         currentPage = page
                     )
                 }

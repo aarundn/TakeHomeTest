@@ -34,7 +34,11 @@ class ListViewModel @Inject constructor(
             }
 
             is ListEvent.OnItemClick -> TODO()
-            is ListEvent.OnNavigateToDetails -> TODO()
+            is ListEvent.OnNavigateToDetails -> viewModelScope.launch {
+                _sideEffect.emit(
+                    ListSideEffect.NavigateToDetails(itemId = event.itemId)
+                )
+            }
             is ListEvent.OnShowToast -> TODO()
         }
     }

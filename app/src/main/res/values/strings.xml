@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">TakeHomeTest</string>
+    <string name="no_characters_found">No characters found</string>
+    <string name="rick_and_morty_characters">Rick and Morty Characters</string>
 </resources>

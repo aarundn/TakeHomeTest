@@ -3,10 +3,17 @@ package com.example.takehometest.presentation.list
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,6 +49,7 @@ fun ListScreen(
                     ListContent(
                         characters = state.items,
                         onAction = onAction,
+                        state = state,
                         modifier = Modifier.fillMaxSize()
                     )
 
@@ -57,14 +65,36 @@ fun ListScreen(
 fun ListContent(
     characters: List<CharacterUi>,
     onAction: (ListEvent) -> Unit,
+    state: ListUiState,
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+    LaunchedEffect(listState) {
+        snapshotFlow {
+            val layoutInfo = listState.layoutInfo
+            val lastVisibleItemIndex = layoutInfo.visibleItemsInfo.lastOrNull()?.index
+            val totalItems = layoutInfo.totalItemsCount
+            lastVisibleItemIndex to totalItems
+
+        }.collect { (lastVisibleIndex, totalItems) ->
+
+            if (lastVisibleIndex != null && totalItems > 0) {
+                if (lastVisibleIndex >= totalItems - 2) {
+                    onAction(ListEvent.OnLoadMore)
+                }
+            }
+        }
+    }
     LazyColumn(
+        state = listState,
         modifier = modifier
             .fillMaxSize()
             .padding(horizontal = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
+
+
         item { ListHeader() }
         when {
 
@@ -75,13 +105,22 @@ fun ListContent(
                 )
             }
 
-            else -> items(characters.size, key = { index -> characters[index].id }) { index ->
+            else -> items(characters.size,
+                key = { index -> characters[index].id }) { index ->
                 val character = characters[index]
                 ListItems(
                     character = character,
                     onGoToDetails = { id ->
                         onAction(ListEvent.OnNavigateToDetails(id))
                     }
+                )
+            }
+        }
+        item {
+            if ((state as? ListUiState.Success)?.isLoadingMore == true) {
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .size(32.dp),
                 )
             }
         }

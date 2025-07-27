@@ -62,6 +62,7 @@ fun ListItems(
             Text(
                 text = character.name,
                 style = MaterialTheme.typography.titleLarge,
+                maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(

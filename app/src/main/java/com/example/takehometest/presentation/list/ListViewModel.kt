@@ -3,7 +3,9 @@ package com.example.takehometest.presentation.list
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.takehometest.domain.usecases.GetCharactersUseCase
+import com.example.takehometest.presentation.list.ListSideEffect.*
 import com.example.takehometest.presentation.mapper.toUiModel
+import com.example.takehometest.presentation.model.CharacterUi
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,29 +31,50 @@ class ListViewModel @Inject constructor(
     fun onAction(event: ListEvent) {
         when (event) {
             ListEvent.OnBackClick -> TODO()
-            is ListEvent.OnGetItems -> {
-                loadInitialItems(event.page)
+            is ListEvent.OnGetInitialItems -> {
+                _state.value = ListUiState.Loading
+                loadItems(event.page)
             }
 
             is ListEvent.OnItemClick -> TODO()
             is ListEvent.OnNavigateToDetails -> viewModelScope.launch {
                 _sideEffect.emit(
-                    ListSideEffect.NavigateToDetails(itemId = event.itemId)
+                    NavigateToDetails(itemId = event.itemId)
                 )
             }
+
             is ListEvent.OnShowToast -> TODO()
+            ListEvent.OnLoadMore -> loadMoreItems()
+
         }
     }
 
-    private fun loadInitialItems(page: Int) {
+    private fun loadMoreItems() {
+        val currentState = _state.value
+        if (
+            currentState is ListUiState.Success &&
+            !currentState.isLoadingMore &&
+            !currentState.reachedEndOfList
+        ) {
+            _state.value = currentState.copy(isLoadingMore = true)
+            val nextPage = currentState.currentPage + 1
+            loadItems(nextPage, currentState.items)
+        }
+    }
+
+    private fun loadItems(page: Int, previousItems: List<CharacterUi> = emptyList()) {
         viewModelScope.launch(IO) {
-            _state.value = ListUiState.Loading
             getCharactersUseCase.invoke(page = page)
                 .catch { e ->
                     _state.value = ListUiState.Error(e.message ?: "Unknown error")
                 }
-                .collect { characters ->
-                    _state.value = ListUiState.Success(items = characters.toUiModel())
+                .collect { result ->
+                    _state.value = ListUiState.Success(
+                        items = previousItems + result.characters.toUiModel() ,
+                        isLoadingMore = false,
+                        reachedEndOfList = result.totalPages <= page,
+                        currentPage = page
+                    )
                 }
         }
     }

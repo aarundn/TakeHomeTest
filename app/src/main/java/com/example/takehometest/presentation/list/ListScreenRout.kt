@@ -17,7 +17,7 @@ fun ListScreenRout(
     val state = viewModel.state.collectAsStateWithLifecycle().value
 
     LaunchedEffect(Unit) {
-        viewModel.onAction(ListEvent.OnGetItems(1))
+        viewModel.onAction(ListEvent.OnGetInitialItems(1))
         viewModel.sideEffect.collectLatest { effect ->
             when (effect) {
                 ListSideEffect.NavigateBack -> TODO()

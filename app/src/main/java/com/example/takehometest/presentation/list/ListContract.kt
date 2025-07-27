@@ -7,14 +7,20 @@ sealed class ListUiState {
 
     object Loading : ListUiState()
 
-    data class Success(val items: List<CharacterUi>) : ListUiState()
+    data class Success(
+        val items: List<CharacterUi> = emptyList(),
+        var isLoadingMore: Boolean = false,
+        var reachedEndOfList: Boolean = false,
+        var currentPage: Int = 0,
+    ) : ListUiState()
 
     data class Error(val message: String) : ListUiState()
 
 }
 
 sealed class ListEvent {
-    data class OnGetItems(val page: Int) : ListEvent()
+    data class OnGetInitialItems(val page: Int) : ListEvent()
+    object OnLoadMore : ListEvent()
     data class OnItemClick(val id: Int) : ListEvent()
     data class OnNavigateToDetails(val itemId: Int) : ListEvent()
     object OnBackClick : ListEvent()

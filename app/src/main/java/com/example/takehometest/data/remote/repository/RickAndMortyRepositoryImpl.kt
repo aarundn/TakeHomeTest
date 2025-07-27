@@ -11,16 +11,20 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 import com.example.takehometest.domain.model.Character
+import com.example.takehometest.domain.model.CharacterPageResult
 
 class RickAndMortyRepositoryImpl @Inject constructor(
     val ktorClient: HttpClient
 ) : RickAndMortyRepository {
 
-    override fun getCharacters(page: Int): Flow<List<Character>> = flow {
+    override fun getCharacters(page: Int): Flow<CharacterPageResult> = flow {
 
         val characters = ktorClient.get("${RICK_AND_MORTY_BASE_URL}/character?page=$page")
-            .body<CharacterResponse>().results.toDomainModel()
-        emit(characters)
+            .body<CharacterResponse>()
+        emit(CharacterPageResult(
+            characters = characters.results.toDomainModel(),
+            totalPages = characters.info.pages
+        ))
 
     }
 

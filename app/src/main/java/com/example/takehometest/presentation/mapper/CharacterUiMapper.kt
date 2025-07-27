@@ -10,7 +10,7 @@ fun Character.toUiModel(): CharacterUi {
         name = name,
         status = status,
         species = species,
-        type = type
+        image = image
     )
 }
 

@@ -12,6 +12,7 @@ sealed class ListUiState {
         var isLoadingMore: Boolean = false,
         var reachedEndOfList: Boolean = false,
         var currentPage: Int = 0,
+        val isSearchMode: Boolean = false
     ) : ListUiState()
 
     data class Error(val message: String) : ListUiState()
@@ -23,6 +24,8 @@ sealed class ListEvent {
     object OnLoadMore : ListEvent()
     data class OnNavigateToDetails(val itemId: Int) : ListEvent()
     data class OnShowToast(val message: String) : ListEvent()
+    data class OnSearch(val query: String) : ListEvent()
+    object OnClearSearch : ListEvent()
 }
 
 sealed interface ListSideEffect {

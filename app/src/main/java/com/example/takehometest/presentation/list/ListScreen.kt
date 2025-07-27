@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.snapshotFlow
@@ -23,10 +25,12 @@ import com.example.takehometest.presentation.list.ListEvent.OnShowToast
 import com.example.takehometest.presentation.list.components.EmptyListScreen
 import com.example.takehometest.presentation.list.components.ListHeader
 import com.example.takehometest.presentation.list.components.ListItems
+import com.example.takehometest.presentation.list.components.SearchBar
 import com.example.takehometest.presentation.model.CharacterUi
 import com.example.takehometest.ui.theme.TakeHomeTestTheme
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ListScreen(
     onAction: (ListEvent) -> Unit,
@@ -34,9 +38,21 @@ fun ListScreen(
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
+        topBar = {
+            TopAppBar(
+                title = {
+                    SearchBar(
+                        onAction = onAction,
+                        modifier = Modifier.padding(end = 8.dp)
+                    )
+                }
+            )
+        },
     ) { padding ->
         Box(modifier = Modifier.padding(padding)) {
+
             when (state) {
+
                 is ListUiState.Loading -> LoadingIndicator(modifier = Modifier.fillMaxSize())
 
                 is ListUiState.Error -> onAction(OnShowToast(state.message))
@@ -46,7 +62,6 @@ fun ListScreen(
                         characters = state.items,
                         onAction = onAction,
                         state = state,
-                        modifier = Modifier.fillMaxSize()
                     )
 
                 }
@@ -65,6 +80,8 @@ fun ListContent(
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
+    val state = state as ListUiState.Success
+
     LaunchedEffect(listState) {
         snapshotFlow {
             val layoutInfo = listState.layoutInfo
@@ -75,29 +92,33 @@ fun ListContent(
         }.collect { (lastVisibleIndex, totalItems) ->
 
             if (lastVisibleIndex != null && totalItems > 0) {
-                if (lastVisibleIndex >= totalItems - 1) {
+                if (lastVisibleIndex >= totalItems - 2) {
                     onAction(ListEvent.OnLoadMore)
                 }
             }
         }
     }
+
     LazyColumn(
         state = listState,
         modifier = modifier
             .fillMaxSize()
-            .padding(horizontal = 8.dp),
+            .padding(horizontal = 8.dp)
+            .padding(top = 8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
-        item { ListHeader() }
+        if (!state.isSearchMode)
+            item {
+                ListHeader()
+            }
 
         when {
 
             characters.isEmpty() -> item {
                 EmptyListScreen(
                     message = stringResource(R.string.no_characters_found),
-                    modifier = modifier.fillMaxSize()
+                    modifier = Modifier.fillMaxSize()
                 )
             }
 
@@ -112,7 +133,7 @@ fun ListContent(
             }
         }
         item {
-            val isLoadingMore = (state as? ListUiState.Success)?.isLoadingMore == true
+            val isLoadingMore = state.isLoadingMore == true
             if (isLoadingMore) {
                 CircularProgressIndicator(
                     modifier = Modifier

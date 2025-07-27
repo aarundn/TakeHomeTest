@@ -21,16 +21,22 @@ class RickAndMortyRepositoryImpl @Inject constructor(
 
         val characters = ktorClient.get("${RICK_AND_MORTY_BASE_URL}/character?page=$page")
             .body<CharacterResponse>()
-        emit(CharacterPageResult(
-            characters = characters.results.toDomainModel(),
-            totalPages = characters.info.pages
-        ))
+        emit(
+            CharacterPageResult(
+                characters = characters.results.toDomainModel(),
+                totalPages = characters.info.pages
+            )
+        )
 
     }
 
-    override fun getCharactersByName(name: String): Flow<List<Character>> {
-        TODO("Not yet implemented")
+
+    override fun getCharactersByName(name: String): Flow<List<Character>> = flow {
+        val characters = ktorClient.get("${RICK_AND_MORTY_BASE_URL}/character?name=$name")
+            .body<CharacterResponse>()
+        emit(characters.results.toDomainModel())
     }
+
 
     override suspend fun getCharacterById(id: Int): Character {
         TODO("Not yet implemented")

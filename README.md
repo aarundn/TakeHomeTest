@@ -3,7 +3,11 @@
 A sample Android application built using **Kotlin** and **Jetpack Compose**, showcasing Clean Architecture and MVI pattern for fetching and displaying character data from the Rick and Morty API.
 
 ---
+## 📽️ Demo Video
 
+[Download Demo](media/video_25_07_28_21_17_16.mp4)
+
+---
 ## 📋 Table of Contents
 - [✨ Features](#-features)
 - [🧱 Architecture](#-architecture)

@@ -45,50 +45,36 @@ The project follows **Clean Architecture** with a layered MVI structure:
 #### 4. DI Layer (Hilt)
 - Provides dependencies to all layers via modules
 
-### 🔄 Data Flow
+### 🔄 Application Architecture Diagram
 
 ```mermaid
 graph TD
-    A[Presentation Layer] --> B1[UI (Jetpack Compose)]
-    A --> B2[ViewModel (MVI)]
-    A --> B3[UI Models]
-
-    B2 --> C[Domain Layer]
-    C --> C1[Use Cases]
-    C --> C2[Repository Interface]
-    C2 --> D[Data Layer]
-
-    D --> D1[Repository Implementation]
-    D1 --> D2[Remote Data Source (Ktor)]
-    D2 --> D3[DTOs / Mappers]
-
-    E[Dependency Injection (Hilt)] --> B2
-    E --> D1
-```
-        A1[UI (Jetpack Compose)] --> A2[Intent]
-        A2 --> A3[ViewModel]
-        A3 --> A4[State]
-        A4 --> A1
-        A3 --> A5[Event]
-        A5 --> A1
+    subgraph Presentation Layer (MVI)
+        UI[UI (Jetpack Compose)]
+        ViewModel[ViewModel]
+        UIModels[UI Models]
     end
 
-    subgraph Domain
-        B1[Use Cases] --> B2[Repository Interface]
+    subgraph Domain Layer
+        UseCases[Use Cases]
+        RepositoryInterfaces[Repository Interfaces]
+        DomainModels[Domain Models]
     end
 
-    subgraph Data
-        C1[Repository Implementation] --> C2[Remote Data Source]
-        C2 --> C3[DTOs]
-        C3 --> C4[Mappers]
-        C4 --> C1
-        C1 --> B2
+    subgraph Data Layer
+        RepositoryImplementations[Repository Implementations]
+        DataSources[Remote/Local Data Source]
+        DTOsMappers[DTOs / Mappers]
     end
 
-    subgraph DI
-        D1[Hilt Modules] --> A3
-        D1 --> C1
+    subgraph Dependency Injection (Hilt)
+        HiltModules[Hilt Modules]
     end
+
+    Presentation --> Domain
+    Domain --> Data
+    DI --> Presentation
+    DI --> Data
 ```
 
 ---

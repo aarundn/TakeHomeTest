@@ -17,7 +17,7 @@ fun StatusLabel(status: String) {
     ) {
         Text(
             text = status,
-            style = MaterialTheme.typography.labelLarge,
+            style = MaterialTheme.typography.labelMedium,
             color = MaterialTheme.colorScheme.onTertiary,
             modifier = Modifier
                 .background(

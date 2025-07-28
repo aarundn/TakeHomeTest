@@ -28,7 +28,7 @@ fun DetailsBody(character: CharacterUi) {
         Row {
             Text(
                 text = character.name,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineMedium,
                 modifier = Modifier.weight(1f),
                 color = MaterialTheme.colorScheme.onBackground,
                 overflow = TextOverflow.Ellipsis,
@@ -38,14 +38,14 @@ fun DetailsBody(character: CharacterUi) {
         }
         Text(
             text = character.species,
-            style = MaterialTheme.typography.bodyMedium,
+            style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onBackground
         )
 
         Spacer(Modifier.height(16.dp))
         Text(
             text = stringResource(R.string.lorem_text),
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             color = MaterialTheme.colorScheme.onBackground,
             modifier = Modifier.padding(end = 16.dp)
         )

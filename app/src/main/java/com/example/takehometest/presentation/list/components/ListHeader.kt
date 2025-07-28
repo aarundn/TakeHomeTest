@@ -14,7 +14,7 @@ import com.example.takehometest.R
 fun ListHeader() {
     Text(
         text = stringResource(R.string.rick_and_morty_characters),
-        style = MaterialTheme.typography.headlineLarge,
+        style = MaterialTheme.typography.headlineMedium,
         modifier = Modifier.padding(start = 16.dp, top = 16.dp)
     )
 }

@@ -36,7 +36,7 @@ fun ListItems(
             .clickable{onGoToDetails(character.id)}
             .height(120.dp)
             .background(
-                color = MaterialTheme.colorScheme.background,
+                color = MaterialTheme.colorScheme.surfaceContainer,
                 shape = RoundedCornerShape(16.dp)
             ),
         verticalAlignment = Alignment.CenterVertically,
@@ -61,13 +61,13 @@ fun ListItems(
         ) {
             Text(
                 text = character.name,
-                style = MaterialTheme.typography.titleLarge,
+                style = MaterialTheme.typography.headlineSmall,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
                 text = character.species,
-                style = MaterialTheme.typography.bodyMedium,
+                style = MaterialTheme.typography.bodySmall,
             )
         }
         StatusLabel(character.status)

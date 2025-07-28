@@ -44,7 +44,7 @@ fun SearchBar(
         maxLines = 1,
         modifier = modifier
             .height(48.dp),
-        textStyle = MaterialTheme.typography.bodyLarge.copy(
+        textStyle = MaterialTheme.typography.labelSmall.copy(
             color = MaterialTheme.colorScheme.onBackground
         ),
         decorationBox = { innerTextField ->
@@ -52,7 +52,7 @@ fun SearchBar(
                 modifier = Modifier
                     .fillMaxWidth()
                     .background(
-                        color = MaterialTheme.colorScheme.secondaryContainer,
+                        color = MaterialTheme.colorScheme.surfaceContainer,
                         shape = RoundedCornerShape(26.dp)
                     )
                     .padding(horizontal = 8.dp),
@@ -62,18 +62,17 @@ fun SearchBar(
                     Icon(
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search Icon",
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer,
+                        tint = MaterialTheme.colorScheme.onBackground,
                     )
                 }
                 Box(
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
+                    contentAlignment = Alignment.CenterStart
                 ) {
                     if (input.value.isEmpty())
                         Text(
                             text = stringResource(R.string.search_by_name),
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            ),
+                            style = MaterialTheme.typography.labelSmall,
                             overflow = TextOverflow.Ellipsis,
                         )
                     innerTextField()

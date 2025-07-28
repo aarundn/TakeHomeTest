@@ -22,7 +22,7 @@ fun EmptyListScreen(message: String, modifier: Modifier) {
         Text(
             text = message,
             textAlign = TextAlign.Center,
-            style = MaterialTheme.typography.bodyLarge,
+            style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(horizontal = 16.dp)
         )
     }

@@ -45,38 +45,6 @@ The project follows **Clean Architecture** with a layered MVI structure:
 #### 4. DI Layer (Hilt)
 - Provides dependencies to all layers via modules
 
-### 🔄 Application Architecture Diagram
-
-```mermaid
-graph TD
-    subgraph PresentationLayer[Presentation Layer (MVI)]
-        UI["UI (Jetpack Compose)"]
-        ViewModel[ViewModel]
-        UIModels[UI Models]
-    end
-
-    subgraph DomainLayer[Domain Layer]
-        UseCases[Use Cases]
-        RepositoryInterfaces[Repository Interfaces]
-        DomainModels[Domain Models]
-    end
-
-    subgraph DataLayer[Data Layer]
-        RepositoryImplementations[Repository Implementations]
-        DataSources[Remote/Local Data Source]
-        DTOsMappers[DTOs / Mappers]
-    end
-
-    subgraph DILayer[Dependency Injection (Hilt)]
-        HiltModules[Hilt Modules]
-    end
-
-    PresentationLayer --> DomainLayer
-    DomainLayer --> DataLayer
-    DILayer --> PresentationLayer
-    DILayer --> DataLayer
-```
-
 ---
 
 ## 🛠️ Technologies Used

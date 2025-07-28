@@ -3,7 +3,6 @@ package com.example.takehometest.presentation.list.components
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,6 +21,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
+import com.example.takehometest.presentation.comon.components.StatusLabel
 import com.example.takehometest.presentation.model.CharacterUi
 import com.example.takehometest.ui.theme.TakeHomeTestTheme
 
@@ -70,21 +70,7 @@ fun ListItems(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        Box(
-            modifier = Modifier.padding(end = 16.dp)
-        ){
-            Text(
-                text = character.status,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onTertiary,
-                modifier = Modifier
-                    .background(
-                        color = MaterialTheme.colorScheme.tertiary,
-                        shape = RoundedCornerShape(31.dp)
-                    )
-                .padding(horizontal = 12.dp, vertical = 5.dp)
-            )
-        }
+        StatusLabel(character.status)
 
     }
 }

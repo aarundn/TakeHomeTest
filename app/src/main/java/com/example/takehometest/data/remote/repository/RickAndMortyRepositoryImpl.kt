@@ -1,6 +1,7 @@
 package com.example.takehometest.data.remote.repository
 
 import com.example.takehometest.data.mapper.toDomainModel
+import com.example.takehometest.data.remote.model.CharacterDto
 import com.example.takehometest.data.remote.model.CharacterResponse
 import com.example.takehometest.di.RICK_AND_MORTY_BASE_URL
 import com.example.takehometest.domain.repos.RickAndMortyRepository
@@ -39,6 +40,8 @@ class RickAndMortyRepositoryImpl @Inject constructor(
 
 
     override suspend fun getCharacterById(id: Int): Character {
-        TODO("Not yet implemented")
+        val character = ktorClient.get("${RICK_AND_MORTY_BASE_URL}/character/$id")
+            .body<CharacterDto>()
+        return character.toDomainModel()
     }
 }

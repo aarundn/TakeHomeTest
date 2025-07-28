@@ -49,32 +49,32 @@ The project follows **Clean Architecture** with a layered MVI structure:
 
 ```mermaid
 graph TD
-    subgraph Presentation Layer (MVI)
-        UI[UI (Jetpack Compose)]
+    subgraph PresentationLayer[Presentation Layer (MVI)]
+        UI["UI (Jetpack Compose)"]
         ViewModel[ViewModel]
         UIModels[UI Models]
     end
 
-    subgraph Domain Layer
+    subgraph DomainLayer[Domain Layer]
         UseCases[Use Cases]
         RepositoryInterfaces[Repository Interfaces]
         DomainModels[Domain Models]
     end
 
-    subgraph Data Layer
+    subgraph DataLayer[Data Layer]
         RepositoryImplementations[Repository Implementations]
         DataSources[Remote/Local Data Source]
         DTOsMappers[DTOs / Mappers]
     end
 
-    subgraph Dependency Injection (Hilt)
+    subgraph DILayer[Dependency Injection (Hilt)]
         HiltModules[Hilt Modules]
     end
 
-    Presentation --> Domain
-    Domain --> Data
-    DI --> Presentation
-    DI --> Data
+    PresentationLayer --> DomainLayer
+    DomainLayer --> DataLayer
+    DILayer --> PresentationLayer
+    DILayer --> DataLayer
 ```
 
 ---

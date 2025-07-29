@@ -36,7 +36,7 @@ fun ListItems(
             .clickable{onGoToDetails(character.id)}
             .height(120.dp)
             .background(
-                color = MaterialTheme.colorScheme.background,
+                color = MaterialTheme.colorScheme.surfaceContainer,
                 shape = RoundedCornerShape(16.dp)
             ),
         verticalAlignment = Alignment.CenterVertically,

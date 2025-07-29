@@ -1,37 +1,38 @@
 package com.example.takehometest.presentation.list
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.takehometest.R
 import com.example.takehometest.presentation.comon.components.LoadingIndicator
 import com.example.takehometest.presentation.list.ListEvent.OnShowToast
-import com.example.takehometest.presentation.list.components.EmptyListScreen
-import com.example.takehometest.presentation.list.components.ListHeader
-import com.example.takehometest.presentation.list.components.ListItems
+import com.example.takehometest.presentation.list.components.LazyList
 import com.example.takehometest.presentation.list.components.SearchBar
 import com.example.takehometest.presentation.model.CharacterUi
 import com.example.takehometest.ui.theme.TakeHomeTestTheme
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -70,7 +71,6 @@ fun ListScreen(
                         onAction = onAction,
                         state = state,
                     )
-
                 }
             }
         }
@@ -87,6 +87,10 @@ fun ListContent(
     modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
+    val coroutineScope = rememberCoroutineScope()
+    val showButton by remember {
+        derivedStateOf { listState.firstVisibleItemIndex > 0 }
+    }
     val state = state as ListUiState.Success
 
     LaunchedEffect(listState) {
@@ -105,53 +109,37 @@ fun ListContent(
             }
         }
     }
+    Box {
+        LazyList(
+            listState = listState,
+            modifier = modifier,
+            state = state,
+            characters = characters,
+            onAction = onAction
+        )
 
-    LazyColumn(
-        state = listState,
-        modifier = modifier
-            .fillMaxSize()
-            .padding(horizontal = 8.dp)
-            .padding(top = 8.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        if (!state.isSearchMode)
-            item {
-                ListHeader()
-                Spacer(Modifier.height(16.dp))
-            }
+        if (showButton)
 
-        when {
-
-            characters.isEmpty() -> item {
-                EmptyListScreen(
-                    message = stringResource(R.string.no_characters_found),
-                    modifier = Modifier.fillMaxSize()
+            FloatingActionButton(
+                containerColor = MaterialTheme.colorScheme.primary,
+                modifier = Modifier
+                    .align(Alignment.BottomEnd)
+                    .padding(16.dp)
+                    .clip(CircleShape),
+                onClick = {
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(0)
+                    }
+                }) {
+                Icon(
+                    imageVector = Icons.Default.KeyboardArrowUp,
+                    contentDescription = "navigate up",
+                    tint = MaterialTheme.colorScheme.onPrimary
                 )
             }
 
-            else -> items(
-                characters.size,
-                key = { index -> characters[index].id }) { index ->
-                val character = characters[index]
-                ListItems(
-                    character = character,
-                    onGoToDetails = { id -> onAction(ListEvent.OnNavigateToDetails(id)) }
-                )
-            }
-        }
-        item {
-            val isLoadingMore = state.isLoadingMore == true
-            if (isLoadingMore) {
-                CircularProgressIndicator(
-                    modifier = Modifier
-                        .size(32.dp),
-                )
-            }
-        }
     }
 }
-
 
 @Preview
 @Composable
